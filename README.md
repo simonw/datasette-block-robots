@@ -19,6 +19,8 @@ Having installed the plugin, `/robots.txt` on your Datasette instance will retur
     User-agent: *
     Disallow: /
 
+Here's a demo of the plugin in action: https://sqlite-generate-demo.datasette.io/robots.txt
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
