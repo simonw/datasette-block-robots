@@ -21,6 +21,26 @@ Having installed the plugin, `/robots.txt` on your Datasette instance will retur
 
 Here's a demo of the plugin in action: https://sqlite-generate-demo.datasette.io/robots.txt
 
+## Configuration
+
+By default the plugin will block all access to the site, using `Disallow: /`.
+
+You can instead block access to specific areas of the site by adding the following to your `metadata.json` configuration file:
+
+```json
+{
+    "plugins": {
+        "datasette-block-robots": {
+            "disallow": ["/mydatabase"]
+        }
+    }
+}
+```
+This will result in a `/robots.txt` that looks like this:
+
+    User-agent: *
+    Disallow: /mydatabase
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
