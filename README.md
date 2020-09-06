@@ -41,6 +41,20 @@ This will result in a `/robots.txt` that looks like this:
     User-agent: *
     Disallow: /mydatabase
 
+You can also set the full contents of the `robots.txt` file using the `literal` configuration option. Here's how to do that if you are using YAML rather than JSON and have a `metadata.yml` file:
+
+```yaml
+plugins:
+    datasette-block-robots:
+        literal: |-
+            User-agent: *
+            Disallow: /
+            User-agent: Bingbot
+            User-agent: Googlebot
+            Disallow:
+```
+This example would block all crawlers with the exception of Googlebot and Bingbot, which are allowed to crawl the entire site.
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:

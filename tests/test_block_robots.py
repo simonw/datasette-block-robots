@@ -34,3 +34,39 @@ async def test_config_disallow(config, expected):
         assert response.status_code == 200
         assert response.headers["content-type"] == "text/plain; charset=utf-8"
         assert response.text == expected
+
+
+LITERAL = """
+User-agent: *
+Disallow: /
+User-agent: Bingbot
+User-agent: Googlebot
+Disallow:
+""".strip()
+
+
+@pytest.mark.asyncio
+async def test_literal():
+    app = Datasette(
+        [],
+        memory=True,
+        metadata={"plugins": {"datasette-block-robots": {"literal": LITERAL}}},
+    ).app()
+    async with httpx.AsyncClient(app=app) as client:
+        response = await client.get("http://localhost/robots.txt")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "text/plain; charset=utf-8"
+        assert response.text == LITERAL
+
+
+@pytest.mark.asyncio
+async def test_literal():
+    ds = Datasette(
+        [],
+        memory=True,
+        metadata={
+            "plugins": {"datasette-block-robots": {"literal": LITERAL, "disallow": "/"}}
+        },
+    )
+    with pytest.raises(AssertionError):
+        await ds.invoke_startup()
