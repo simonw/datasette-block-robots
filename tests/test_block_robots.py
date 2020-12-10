@@ -60,7 +60,7 @@ async def test_literal():
 
 
 @pytest.mark.asyncio
-async def test_literal():
+async def test_literal_prevent_literal_and_disallow_at_same_time():
     ds = Datasette(
         [],
         memory=True,
