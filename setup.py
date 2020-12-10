@@ -28,7 +28,7 @@ setup(
     version=VERSION,
     packages=["datasette_block_robots"],
     entry_points={"datasette": ["block_robots = datasette_block_robots"]},
-    install_requires=["datasette>=0.45"],
+    install_requires=["datasette>=0.50"],
     extras_require={"test": ["pytest", "pytest-asyncio", "httpx"]},
     tests_require=["datasette-block-robots[test]"],
 )

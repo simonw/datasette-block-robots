@@ -5,12 +5,11 @@ import httpx
 
 @pytest.mark.asyncio
 async def test_robots_txt():
-    app = Datasette([], memory=True).app()
-    async with httpx.AsyncClient(app=app) as client:
-        response = await client.get("http://localhost/robots.txt")
-        assert response.status_code == 200
-        assert response.headers["content-type"] == "text/plain; charset=utf-8"
-        assert response.text == "User-agent: *\nDisallow: /"
+    ds = Datasette([], memory=True)
+    response = await ds.client.get("/robots.txt")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/plain; charset=utf-8"
+    assert response.text == "User-agent: *\nDisallow: /"
 
 
 @pytest.mark.asyncio
@@ -26,14 +25,13 @@ async def test_robots_txt():
     ],
 )
 async def test_config_disallow(config, expected):
-    app = Datasette(
+    ds = Datasette(
         [], memory=True, metadata={"plugins": {"datasette-block-robots": config}}
-    ).app()
-    async with httpx.AsyncClient(app=app) as client:
-        response = await client.get("http://localhost/robots.txt")
-        assert response.status_code == 200
-        assert response.headers["content-type"] == "text/plain; charset=utf-8"
-        assert response.text == expected
+    )
+    response = await ds.client.get("/robots.txt")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/plain; charset=utf-8"
+    assert response.text == expected
 
 
 LITERAL = """
@@ -47,16 +45,15 @@ Disallow:
 
 @pytest.mark.asyncio
 async def test_literal():
-    app = Datasette(
+    ds = Datasette(
         [],
         memory=True,
         metadata={"plugins": {"datasette-block-robots": {"literal": LITERAL}}},
-    ).app()
-    async with httpx.AsyncClient(app=app) as client:
-        response = await client.get("http://localhost/robots.txt")
-        assert response.status_code == 200
-        assert response.headers["content-type"] == "text/plain; charset=utf-8"
-        assert response.text == LITERAL
+    )
+    response = await ds.client.get("/robots.txt")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/plain; charset=utf-8"
+    assert response.text == LITERAL
 
 
 @pytest.mark.asyncio
