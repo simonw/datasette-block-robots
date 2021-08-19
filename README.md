@@ -4,7 +4,7 @@
 [![Changelog](https://img.shields.io/github/v/release/simonw/datasette-block-robots?label=changelog)](https://github.com/simonw/datasette-block-robots/releases)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-block-robots/blob/master/LICENSE)
 
-Datasette plugin that blocks all robots using robots.txt
+Datasette plugin that blocks robots and crawlers using robots.txt
 
 ## Installation
 
@@ -19,19 +19,40 @@ Having installed the plugin, `/robots.txt` on your Datasette instance will retur
     User-agent: *
     Disallow: /
 
+This will request all robots and crawlers not to visit any of the pages on your site.
+
 Here's a demo of the plugin in action: https://sqlite-generate-demo.datasette.io/robots.txt
 
 ## Configuration
 
 By default the plugin will block all access to the site, using `Disallow: /`.
 
-You can instead block access to specific areas of the site by adding the following to your `metadata.json` configuration file:
+If you want the index page to be indexed by search engines without crawling the database, table or row pages themselves, you can use the following:
 
 ```json
 {
     "plugins": {
         "datasette-block-robots": {
-            "disallow": ["/mydatabase"]
+            "allow_only_index": true
+        }
+    }
+}
+```
+This will return a `/robots.txt` like so:
+
+    User-agent: *
+    Disallow: /db1
+    Disallow: /db2
+
+With a `Disallow` line for every attached database.
+
+To block access to specific areas of the site using custom paths, add this to your `metadata.json` configuration file:
+
+```json
+{
+    "plugins": {
+        "datasette-block-robots": {
+            "disallow": ["/mydatabase/mytable"]
         }
     }
 }
@@ -39,9 +60,9 @@ You can instead block access to specific areas of the site by adding the followi
 This will result in a `/robots.txt` that looks like this:
 
     User-agent: *
-    Disallow: /mydatabase
+    Disallow: /mydatabase/mytable
 
-You can also set the full contents of the `robots.txt` file using the `literal` configuration option. Here's how to do that if you are using YAML rather than JSON and have a `metadata.yml` file:
+Alternatively you can set the full contents of the `robots.txt` file using the `literal` configuration option. Here's how to do that if you are using YAML rather than JSON and have a `metadata.yml` file:
 
 ```yaml
 plugins:
