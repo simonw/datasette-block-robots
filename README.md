@@ -76,6 +76,42 @@ plugins:
 ```
 This example would block all crawlers with the exception of Googlebot and Bingbot, which are allowed to crawl the entire site.
 
+## Extending this with other plugins
+
+This plugin adds a new [plugin hook](https://docs.datasette.io/en/stable/plugin_hooks.html) to Datasete called `block_robots_extra_lines()` which can be used by other plugins to add their own additional lines to the `robots.txt` file.
+
+The plugin hook takes one optional `datasette` argument representing the current Datasette instance - you can use that to execute SQL queries or look up plugin configuration settings.
+
+The hook should return a list of strings, each representing a line to be added to the `robots.txt` file.
+
+It can also return an `async def` function, which will be awaited and used to generate a list of lines. Use this option if you need to make `await` calls inside you hook implementation.
+
+This example uses the hook to add a `Sitemap: http://example.com/sitemap.xml` line to the `robots.txt` file:
+
+```python
+from datasette import hookimpl
+
+@hookimpl
+def block_robots_extra_lines(datasette, request):
+    return [
+        "Sitemap: {}".format(datasette.absolute_url(request, "/sitemap.xml")),
+    ]
+```
+This example blocks access to paths based on a database query:
+
+```python
+@hookimpl
+def block_robots_extra_lines(datasette):
+    async def inner():
+        db = datasette.get_database()
+        result = await db.execute("select path from mytable")
+        return [
+            "Disallow: /{}".format(row["path"]) for row in result
+        ]
+    return inner
+```
+[datasette-sitemap](https://datasette.io/plugins/datasette-sitemap) is an example of a plugin that uses this hook.
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
