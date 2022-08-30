@@ -80,7 +80,10 @@ This example would block all crawlers with the exception of Googlebot and Bingbo
 
 This plugin adds a new [plugin hook](https://docs.datasette.io/en/stable/plugin_hooks.html) to Datasete called `block_robots_extra_lines()` which can be used by other plugins to add their own additional lines to the `robots.txt` file.
 
-The plugin hook takes one optional `datasette` argument representing the current Datasette instance - you can use that to execute SQL queries or look up plugin configuration settings.
+The hook can optionally accept these parameters:
+
+- `datasette`: The current [Datasette instance](https://docs.datasette.io/en/stable/internals.html#datasette-class). You can use this to execute SQL queries or read plugin configuration settings.
+- `request`: The [Request object](https://docs.datasette.io/en/stable/internals.html#request-object) representing the incoming request to `/robots.txt`.
 
 The hook should return a list of strings, each representing a line to be added to the `robots.txt` file.
 
