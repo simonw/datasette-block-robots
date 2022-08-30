@@ -90,8 +90,11 @@ async def test_extra_lines_plugin_hook():
         __name__ = "TestPlugin"
 
         @hookimpl
-        def block_robots_extra_lines(self):
-            return ["Extra line: 1", "Extra line: 2"]
+        def block_robots_extra_lines(self, datasette, request):
+            return [
+                "Extra line: 1",
+                "Sitemap: {}".format(datasette.absolute_url(request, "/sitemap.xml")),
+            ]
 
     class TestPluginAsync:
         __name__ = "TestPluginAsync"
@@ -100,7 +103,7 @@ async def test_extra_lines_plugin_hook():
         def block_robots_extra_lines(self, datasette):
             async def inner():
                 db = datasette.get_database()
-                result = await db.execute("select 2 + 1")
+                result = await db.execute("select 1 + 1")
                 return ["Extra line: {}".format(result.single_value())]
 
             return inner
@@ -115,7 +118,7 @@ async def test_extra_lines_plugin_hook():
         for expected in (
             "Extra line: 1",
             "Extra line: 2",
-            "Extra line: 3",
+            "Sitemap: http://localhost/sitemap.xml",
         ):
             assert expected in lines
     finally:
