@@ -1,6 +1,6 @@
 [project]
 name = "datasette-block-robots"
-version = "1.1"
+version = "1.1.1"
 description = "Datasette plugin that blocks all robots using robots.txt"
 readme = "README.md"
 requires-python = ">=3.10"
